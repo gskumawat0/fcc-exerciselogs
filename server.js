@@ -81,8 +81,11 @@ app.post('/api/exercise/new-user', async (req, res)=>{
 app.post('/api/exercise/add', async(req, res)=>{
   try{
     let {userId, duration, description, date} = req.body;
-    let  = await ExerciseLog.create({userId, duration, description, date});
-    return res.json(user);
+    await ExerciseLog.create({userId, duration, description, date});
+    let userPromise = User.findById(userId);
+    let exercisePromise = ExerciseLog.find({userId});
+    let [user, exerciseLogs] = await Promise.all([userPromise, exercisePromise])
+    return res.json({exerciseLogs: [...exerciseLogs], ...user});
   }
   catch(err){
     return res.json({
@@ -92,9 +95,15 @@ app.post('/api/exercise/add', async(req, res)=>{
 })
 
 app.get('/api/exercise/log', async (req, res)=>{
-  let {userId, from, to, limit} = req.query;
-  
-  
+  try{
+    let {userId, from, to, limit} = req.query;
+    let exerciseLogs = await ExerciseLog.find({userId: userId, date: {$gt: from, $lte: to} }).limit(limit);
+  }
+  catch(err){
+    return res.json({
+      error: err.message
+    })
+  }
 })
 
 
