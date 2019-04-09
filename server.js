@@ -9,16 +9,22 @@ const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
   username: String,
-  exerciseLog: [{
+})
+
+const exerciseLogSchema = new mongoose.Schema({
     description: String,
     duration: Number,
     date: {
       type: Date,
       default: Date.now()
+    },
+  userId: {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "User"      
     }
-  }]
-})
+  });
 
+const ExerciseLog = mongoose.model('ExerciseLog', exerciseLogSchema);
 const User = mongoose.model("User", userSchema);
 
 app.use(cors())
@@ -75,7 +81,7 @@ app.post('/api/exercise/new-user', async (req, res)=>{
 app.post('/api/exercise/add', async(req, res)=>{
   try{
     let {userId, duration, description, date} = req.body;
-    let user = await User.findOneAndUpdate({_id: userId},{$push: {exerciseLog: {userId, duration, description}}}, {new: true});
+    let  = await ExerciseLog.create({userId, duration, description, date});
     return res.json(user);
   }
   catch(err){
