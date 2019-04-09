@@ -106,6 +106,17 @@ app.get('/api/exercise/log', async (req, res)=>{
   }
 })
 
+app.get('/api/exercise/users', async (req, res)=>{
+  try{
+    let users =  await User.find({});
+    return res.json(users);
+  }
+  catch(err){
+    return res.json({
+      error: err.message
+    })
+  }
+})
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
