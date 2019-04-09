@@ -72,6 +72,26 @@ app.post('/api/exercise/new-user', async (req, res)=>{
   }
 })
 
+app.post('/api/exercise/add', async(req, res)=>{
+  try{
+    let {userId, duration, description, date} = req.body;
+    let user = await User.findOneAndUpdate({_id: userId},{$push: {exerciseLog: {userId, duration, description}}}, {new: true});
+    return res.json(user);
+  }
+  catch(err){
+    return res.json({
+      error: err.message
+    })
+  }
+})
+
+app.get('/api/exercise/log', async (req, res)=>{
+  let {userId, from, to, limit} = req.query;
+  
+  
+})
+
+
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
